@@ -1,0 +1,28 @@
+# Only track plugins/ and config/ — ignore everything else at the root.
+/*
+!/plugins/
+!/config/
+!/.gitignore
+
+# Within plugins/ and config/, ignore all contents by default,
+# then re-include what we track. (The negated parent lines above
+# un-ignore the directories themselves, so per-entry rules work.)
+
+# --- plugins: mod binaries + mod metadata/docs ---
+plugins/*
+config/*
+plugins/**
+config/**
+!plugins/**/
+!config/
+
+# --- plugins: tracked file types ---
+!plugins/**/*.dll
+!plugins/**/*.mdb
+!plugins/**/*.pdb
+!plugins/**/*.json
+!plugins/**/*.md
+!plugins/**/*.png
+
+# --- config: tracked file types ---
+!config/**/*.cfg
