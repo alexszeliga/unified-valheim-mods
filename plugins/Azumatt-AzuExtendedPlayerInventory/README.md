@@ -7,11 +7,14 @@ from different mods merge instead of fighting. Works with an existing character 
 
 *Mod author? Adding an equipment slot is one line — jump to [the API](#api-for-mod-developers).*
 
-- **Vanity System** - Change armor appearance without losing stats
+- **Vanity System** - Change how your armor, weapons and shields look without losing stats
 - **Loadout System** - Save & swap 10 equipment sets with custom names
 - **Player Stats** - 40+ customizable stats with smart formatting, in multiplayer you can view others stats also!
 - **Player Preview** - Real-time 3D character view matching your vanity
 - **Quick Slots Expansion** - Now 0-8 slots (up from 3) with full customization
+- **6 Inventory Layouts** - Default, Tabbed, two classic ones, or lookalikes of ExtraSlots and Equipment and Quick Slots
+- **Your Own Slots** - Add or remove equipment slots from the config, no other mod needed
+- **Favoriting** - Mark items and slots so storage mods leave them alone
 
 ![v2.0 Overview Vanity](https://i.imgur.com/UV6N3gl.png)
 
@@ -28,16 +31,57 @@ customization, and loadout management.
 
 Mods that add slots using the API will either create the slot, or extend the slot if it already exists. Meaning, AdventureBackpacks will share the Backpack slot with Smoothbrain's Backpacks. Hunter Legacy will share the quiver slot with BowsBeforeHoes & Rusty Bags.
 
-## Disclaimer, if you don't like the new layout you can use the configuration file to use the old layout (with improvements added)!
+## Disclaimer, if you don't like the new layout you can use the configuration file to use the old layout (with improvements added)! See [Inventory Layouts](#inventory-layouts).
 ![](https://i.imgur.com/cAHSdmP.png)
 
 ### Inventory & Equipment
 
-- **0-6 extra inventory rows** (configurable)
+- **0-5 extra inventory rows** (configurable)
 - **6 standard equipment slots**: Helmet, Chest, Legs, Back, Utility, Trinket
-- **2 special slots**: Wishbone, Demister (toggleable)
+- **2 special slots**: Wishbone, Demister (toggleable). If Jewelcrafting has either one set as a gem, that slot is hidden.
 - **API for mod slots**: Other mods can add custom equipment slots
+- **Config slots**: Add your own slots or remove any slot, see [Slot Management](#slot-management)
 - **Auto-equip**: Items equip automatically when picked up or dragged into an equipment slot. Upgrading an item that was equipped will re-equip the upgraded version automatically.
+
+### Inventory Layouts
+
+Pick one with `Inventory Layout` in `5 - UI Features`. It changes live.
+
+- `Default`: the standard look from the screenshots above.
+- `Tabbed`: your character and slots sit on top of the crafting panel. The hammer button flips between them. At a
+  crafting station it opens on crafting.
+- `Legacy`: the old classic layout.
+- `LegacyDetached`: classic, but in its own box away from the inventory.
+- `ExtraSlots`: looks like shudnal's Extra Slots. Has its own alignment settings (`ExtraSlots Layout Alignment`,
+  `ExtraSlots Quick Slots Centered`).
+- `EquipmentAndQuickSlots`: looks like Randy Knapp's Equipment and Quick Slots.
+
+Got a ton of slots? The side layouts wrap instead of hiding under the crafting panel.
+
+### Slot Management
+
+Everything here lives in `4.5 - Equipment Slot Management`. With a Configuration Manager installed you get a
+`Slot Manager (UI)` with buttons and a prefab browser. Without one, edit the two lists by hand.
+
+- **Custom Equipment Slots**: add your own slots. Format is `SlotName:Prefab1,Prefab2;OtherSlot:Prefab3`, for example
+  `Ring:RingIron,RingGold;Quiver:QuiverBone,QuiverLeather`.
+- **Removed Equipment Slots**: comma separated slot names to take away, for example `Head, Utility, Trinket`. Works on
+  the built-in slots and on slots other mods added. Removing a slot unequips what was in it.
+- **Slots Use Armor** / **Utility Slots Use Armor**: whether armor on items in custom slots counts.
+- **One Utility Item At A Time** (in `4 - Special Equipment Slots`): keeps the dedicated slots but goes back to vanilla
+  rules, equipping one utility item unequips the others.
+
+When slots change (your config, the server's config, or another mod), items stay with their slot. Anything whose slot
+is gone moves to your inventory. Slot settings sync from the server.
+
+### Favoriting
+
+Hold the `Favoriting Modifier Key` (Left Alt by default) and left click an item, or right click any player inventory
+slot, to favorite it. Storage mods won't move favorited items or anything sitting in a favorited slot.
+
+- Border colors and tooltip text are in `10 - Favoriting`.
+- Favorites are shared with AzuAutoStore.
+- If AzuAutoStore or Quick Stack Store is installed, use their favoriting key instead. This one is ignored.
 
 ### Quick Slots (v2.0: 0-8 Slots!)
 
@@ -52,8 +96,13 @@ Mods that add slots using the API will either create the slot, or extend the slo
 
 ### Vanity System
 
-- **Change appearance** of 6 equipment types without losing stats
+- **Change appearance** of your armor without losing stats
+- **Weapons and shields** too. A weapon can only look like another of the same kind, so nothing gets held wrong. Turn
+  it off with `Weapon Vanity`.
+- **Custom slots** get their own vanity section, including the ones you add in the config (might need a restart to
+  show up)
 - **Hide equipment** while keeping benefits
+- **Hide Unknown Vanity Items**: only list armor you've already picked up, instead of black silhouettes
 - **Real-time preview** - character updates instantly
 - **Multiplayer sync** - appearance syncs across network
 - **Auto-disables** when Armoire mod is detected
@@ -124,7 +173,7 @@ place the DLL in `BepInEx/plugins` folder.
 ### Server Setup
 
 - **Version check**: Kicks clients without the mod installed
-- **ServerSync**: Configs sync from server to all clients automatically (the ones tagged with `[Synced From Server]`)
+- **ServerSync**: Configs sync from server to all clients automatically (the ones tagged with `[Synced with Server]`)
 - **File watcher**: Config changes sync in real-time
 
 ---
@@ -134,7 +183,7 @@ place the DLL in `BepInEx/plugins` folder.
 ### Vanity System
 
 1. Open inventory (Tab) → Click Vanity button (👔)
-2. Select equipment slot (Helmet, Chest, Legs, etc.)
+2. Select equipment slot (Helmet, Chest, Legs, a weapon, one of your custom slots, etc.)
 3. Choose vanity item or hide the slot
 4. Appearance changes, stats unchanged!
 
@@ -182,8 +231,8 @@ F1). Most settings apply instantly!
 AzuEPI works out of the box — you do not have to touch any of this. But if you want only extra slots and none of the
 extra UI, set `0 - Presets` → **Apply Preset** to `Minimal`.
 
-That turns off the vanity button, the loadout button, the stats panel and the Drop All button, and switches to the
-classic layout. You are left with equipment slots, quick slots and extra rows — nothing else on screen. `Full` puts
+That turns off the vanity button, the loadout button, the stats panel, the crafting button and the Drop All button, and switches to the
+classic (`Legacy`) layout. You are left with equipment slots, quick slots and extra rows — nothing else on screen. `Full` puts
 everything back.
 
 The preset only touches those UI toggles — your rows, quick slot count, hotkeys and custom slots are never changed by
@@ -192,13 +241,17 @@ starting point, not a mode you get locked into.
 
 **Key Settings:**
 
-- **Section 2 - Inventory**: Extra rows (0-6), equipment row, auto-equip
+- **Section 2 - Inventory**: Extra rows (0-5), equipment row, auto-equip
 - **Section 3 - Quick Slots**: Number (0-8), HUD visibility, layout
-- **Section 4 - Special Slots**: Wishbone, Demister toggle
-- **Section 5 - UI Features**: Vanity/Loadout buttons, stats selection, legacy layout
+- **Section 4 - Special Slots**: Wishbone, Demister toggle, one utility item at a time
+- **Section 4.5 - Slot Management**: Add your own slots, remove slots, armor on custom slots
+- **Section 5 - UI Features**: Inventory layout, Vanity/Loadout/Stats/Crafting buttons, stats selection, weapon vanity
 - **Section 6 - Labels**: Customize equipment slot text
 - **Section 7 - HUD**: Quick slots size, position, drag keys
 - **Section 8 - Hotkeys**: Individual hotkeys for slots 1-8
+- **Section 8.5 - Panel Toggle Keys**: Gamepad keys for the vanity, loadout and stats panels
+- **Section 9 - Additional Features**: Drop All button (off by default)
+- **Section 10 - Favoriting**: Modifier key, border colors, tooltip text
 
 ⚠️ **Important**: Turn OFF "Enable Equipment Row" if using Randy Knapp's Equipment and Quick Slots mod. This mod will
 automatically do this on boot, but keep it off.
@@ -250,7 +303,7 @@ modpack, or you want vanity, loadouts, or the stats panel.
 **Items stuck or equipment not working?**
 
 - Run `azuepi.quickfix` in console (F5)
-- Auto-fix runs when closing inventory
+- Auto-fix runs when opening inventory
 
 **Button disappeared (👔/🎯)?**
 
@@ -350,7 +403,7 @@ required.
 producing duplicates. That is why AdventureBackpacks and Smoothbrain's Backpacks both land in a single Backpack slot,
 and why Hunter Legacy, BowsBeforeHoes and Rusty Bags all share one Quiver slot.
 
-**Also available:** `RemoveSlot`, `RegisterVisualPrefabs`, vanity integration, slot lookup by item or grid position,
+**Also available:** `RemoveSlot`, `RegisterVisualPrefabs`, `RegisterSlotVanity` / `GetSlotVanity` (vanity for slots your mod draws itself), vanity integration, slot lookup by item or grid position,
 and events (`SlotAdded`, `SlotRemoved`, `OnHudAwake`, `OnQuickSlotsAdded`).
 
 **Full Documentation**: https://github.com/AzumattDev/AzuEPI/wiki/API-Home
